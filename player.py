@@ -4,13 +4,13 @@ from constants import *
 from shot import *
 import time
 
+global_last_shot_time = 0
 
 class Player(CircleShape):
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
-        self.last_shot_time = 0
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -49,10 +49,12 @@ class Player(CircleShape):
                 return shot
 
     def shoot(self):
+        global global_last_shot_time
         current_time = time.time()
-        if current_time - self.last_shot_time >= SHOT_COOLDOWN:
+        if current_time - global_last_shot_time >= SHOT_COOLDOWN:
             self.last_shot_time = current_time
             forward = pygame.Vector2(0, 1).rotate(self.rotation)
             position = self.position + forward * self.radius
+            global_last_shot_time = current_time
             return Shot(position.x, position.y, SHOT_RADIUS, self.rotation)
         return None
